@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Usuario</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="profile-container">
+            <div class="logo-container">
+                <img src="../../public/profile-avatar.png" alt="Logo" class="logo">
+            </div>
+            <h2>Perfil de Usuario</h2>
+            
+            <div id="message-container"></div>
+            
+            <div id="user-info">
+                <div class="info-row">
+                    <div class="info-label">ID:</div>
+                    <div id="user-id" class="info-value"></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Nombre:</div>
+                    <div id="user-name" class="info-value"></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Usuario:</div>
+                    <div id="user-login" class="info-value"></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Fecha de inicio:</div>
+                    <div id="user-date-begin" class="info-value"></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Hora de inicio:</div>
+                    <div id="user-time-begin" class="info-value"></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Fecha de finalización:</div>
+                    <div id="user-date-end" class="info-value"></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Hora de finalización:</div>
+                    <div id="user-time-end" class="info-value"></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Estado:</div>
+                    <div id="user-status" class="info-value"></div>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button id="logout-btn" class="btn btn-danger">Cerrar Sesión</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Referencia al contenedor de mensajes
+            const messageContainer = document.getElementById('message-container');
+            const logoutBtn = document.getElementById('logout-btn');
+            // Función para cargar datos del usuario
+            function loadUserData() {
+                const username = localStorage.getItem('currentUser');
+                
+                if (!username) {
+                    showMessage('No hay sesión activa', 'error');
+                    setTimeout(() => {
+                        window.location.href = 'Login.html';
+                    });
+                    return;
+                }
+
+                fetch(`../../../server/app.php?route=user&login=${username}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            displayUserData(data.user);
+                        } else {
+                            showMessage('Error al cargar datos de usuario', 'error');
+                            // Si no hay usuario, redirigir al login
+                            setTimeout(() => {
+                                window.location.href = 'Login.html';
+                            }, 2000);
+                        }
+                    })
+                    .catch(error => {
+                        showMessage('Error de conexión con el servidor', 'error');
+                        console.error('Error:', error);
+                    });
+            }
+            
+            // Función para mostrar los datos del usuario
+            function displayUserData(user) {
+                document.getElementById('user-id').textContent = user.UsrId;
+                document.getElementById('user-name').textContent = user.UsrName;
+                document.getElementById('user-login').textContent = user.UsrLogin;
+                
+                // Formatear fechas para mostrar en formato más legible
+                const dateBegin = formatDate(user.UsrDateBegin);
+                const timeBegin = formatTime(user.UsrTimeBegin);
+                const dateEnd = formatDate(user.UsrDateEnd);
+                const timeEnd = formatTime(user.UsrTimeEnd);
+                
+                document.getElementById('user-date-begin').textContent = dateBegin;
+                document.getElementById('user-time-begin').textContent = timeBegin;
+                document.getElementById('user-date-end').textContent = dateEnd;
+                document.getElementById('user-time-end').textContent = timeEnd;
+                
+                // Mostrar estado
+                const status = user.UsrStatus === '1' ? 'Activo' : 'Inactivo';
+                document.getElementById('user-status').textContent = status;
+                
+                if (user.UsrStatus !== '1') {
+                    showMessage('Su cuenta está inactiva', 'warning');
+                }
+            }
+            
+            // Función para formatear fechas (YYYYMMDD -> DD/MM/YYYY)
+            function formatDate(dateStr) {
+                if (!dateStr || dateStr.length !== 8) return 'N/A';
+                return `${dateStr.substr(6, 2)}/${dateStr.substr(4, 2)}/${dateStr.substr(0, 4)}`;
+            }
+            
+            // Función para formatear horas (HHMMSS -> HH:MM:SS)
+            function formatTime(timeStr) {
+                if (!timeStr || timeStr.length !== 6) return 'N/A';
+                return `${timeStr.substr(0, 2)}:${timeStr.substr(2, 2)}:${timeStr.substr(4, 2)}`;
+            }
+            
+            // Manejar el cierre de sesión
+            logoutBtn.addEventListener('click', function() {
+                // eliminar localstyorage
+                localStorage.removeItem('currentUser');
+                // redirigimos
+                showMessage('Cerrando sesión...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'Login.html';
+                }, 1000);
+            });
+            
+            // Función para mostrar mensajes
+            function showMessage(text, type) {
+                messageContainer.innerHTML = `<div class="message ${type}">${text}</div>`;
+            }
+            
+            // Cargar datos del usuario al iniciar
+            loadUserData();
+        });
+    </script>
+</body>
+</html>
