@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil de Usuario</title>
-    <link rel="stylesheet" href="../css/styles.css">
+    <title>Perfil</title>
+    <link href="https://fonts.googleapis.com/css?family=Exo:400,700" rel="stylesheet">
+    <link rel="stylesheet" href="../css/magic-styles.css">
 </head>
 <body>
     <div class="container">
@@ -12,7 +13,8 @@
             <div class="logo-container">
                 <img src="../../public/profile-avatar.png" alt="Logo" class="logo">
             </div>
-            <h2>Perfil de Usuario</h2>
+            <h2>Panel de Control</h2>
+            <p style="text-align: center; margin-bottom: 20px;">Información de su perfil de usuario</p>
             
             <div id="message-container"></div>
             
@@ -38,11 +40,11 @@
                     <div id="user-time-begin" class="info-value"></div>
                 </div>
                 <div class="info-row">
-                    <div class="info-label">Fecha de finalización:</div>
+                    <div class="info-label">Fecha de fin:</div>
                     <div id="user-date-end" class="info-value"></div>
                 </div>
                 <div class="info-row">
-                    <div class="info-label">Hora de finalización:</div>
+                    <div class="info-label">Hora de fin:</div>
                     <div id="user-time-end" class="info-value"></div>
                 </div>
                 <div class="info-row">
@@ -57,11 +59,13 @@
         </div>
     </div>
 
+    <script src="../js/magic-effects.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Referencia al contenedor de mensajes
             const messageContainer = document.getElementById('message-container');
             const logoutBtn = document.getElementById('logout-btn');
+            
             // Función para cargar datos del usuario
             function loadUserData() {
                 const username = localStorage.getItem('currentUser');
@@ -70,7 +74,7 @@
                     showMessage('No hay sesión activa', 'error');
                     setTimeout(() => {
                         window.location.href = 'Login.html';
-                    });
+                    }, 1500);
                     return;
                 }
 
@@ -81,7 +85,6 @@
                             displayUserData(data.user);
                         } else {
                             showMessage('Error al cargar datos de usuario', 'error');
-                            // Si no hay usuario, redirigir al login
                             setTimeout(() => {
                                 window.location.href = 'Login.html';
                             }, 2000);
@@ -112,9 +115,18 @@
                 
                 // Mostrar estado
                 const status = user.UsrStatus === '1' ? 'Activo' : 'Inactivo';
-                document.getElementById('user-status').textContent = status;
+                const statusElement = document.getElementById('user-status');
+                statusElement.textContent = status;
                 
-                if (user.UsrStatus !== '1') {
+                // Aplicar estilo según el estado
+                if (user.UsrStatus === '1') {
+                    statusElement.style.backgroundColor = '#28cd41'; // Fondo verde
+                    statusElement.style.color = 'white'; // Texto blanco
+                    statusElement.style.borderLeft = 'none'; // Eliminar borde izquierdo
+                } else {
+                    statusElement.style.backgroundColor = '#ff3b30'; // Fondo rojo
+                    statusElement.style.color = 'white'; // Texto blanco
+                    statusElement.style.borderLeft = 'none'; // Eliminar borde izquierdo
                     showMessage('Su cuenta está inactiva', 'warning');
                 }
             }
@@ -133,9 +145,7 @@
             
             // Manejar el cierre de sesión
             logoutBtn.addEventListener('click', function() {
-                // eliminar localstyorage
                 localStorage.removeItem('currentUser');
-                // redirigimos
                 showMessage('Cerrando sesión...', 'success');
                 setTimeout(() => {
                     window.location.href = 'Login.html';

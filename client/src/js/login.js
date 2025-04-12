@@ -6,9 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const forgotLink = document.getElementById('forgot-password-link');
     const cancelRecover = document.getElementById('cancel-recover');
 
-    // === Configuración de Intentos de Inicio de Sesión ===
     const MAX_LOGIN_ATTEMPTS = 3; 
-    const LOCKOUT_DURATION = 10 * 1000; // 15 minutos 
+    const LOCKOUT_DURATION = 10 * 1000;
 
     // === Función para Gestionar Intentos de Inicio de Sesión ===
     function handleLoginAttempt(username) {
@@ -123,7 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // === Resto del código original ===
     // === Registro ===
     if (registerForm) {
         registerForm.addEventListener('submit', function (e) {
@@ -132,14 +130,33 @@ document.addEventListener('DOMContentLoaded', () => {
             const name = document.getElementById('register-name').value;
             const username = document.getElementById('register-username').value;
             const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm-password').value
 
+            // Validar que las contraseñas coincidan
+            if (password !== confirmPassword) {
+                showMessage('Las contraseñas no coinciden', 'error');
+                return;
+            }
+
+            // Añadir fecha y hora de finalización (un año desde hoy, por ejemplo)
+            const today = new Date();
+            const expiryDate = new Date(today);
+            expiryDate.setFullYear(today.getFullYear() + 1); // Un año desde hoy
+
+            const dateEnd = expiryDate.getFullYear() +
+                            ('0' + (expiryDate.getMonth() + 1)).slice(-2) +
+                            ('0' + expiryDate.getDate()).slice(-2);
+            const timeEnd = '235959'; // 23:59:59
+            
             fetch('../../../server/app.php?route=register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     UsrName: name,
                     UsrLogin: username,
-                    UsrPassword: password
+                    UsrPassword: password,
+                    UsrDateEnd: dateEnd,
+                    UsrTimeEnd: timeEnd
                 })
             })
             .then(res => res.json())
