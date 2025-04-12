@@ -64,12 +64,6 @@ Cada registro contiene los siguientes campos:
 
 ---
 
-## 📅 Fecha de presentación
-
-🗓️ **Sábado 12 de abril de 2025**
-
----
-
 ## 🧠 Recomendaciones
 
 - Simular algunos datos iniciales en `Usuarios.dat` para realizar pruebas.
@@ -84,7 +78,6 @@ Cada registro contiene los siguientes campos:
 - Celadita Gaspar Fernando David
 - Nombre 2
 - Nombre 3
-- (Completar con los nombres del equipo)
 
 ---
 
