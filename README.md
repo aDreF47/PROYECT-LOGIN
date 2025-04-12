@@ -75,9 +75,13 @@ Cada registro contiene los siguientes campos:
 
 ## 👨‍💻 Integrantes
 
+- Acuña Montalvan Geraldine Dayhana 
 - Celadita Gaspar Fernando David
-- Nombre 2
-- Nombre 3
+- Chilon Tintaya Monica Isabel
+- Gomez Cayo David Junior
+- Navarro Laguna Sergio Edgardo
+- Lanazca Saya Alex
+- Ttito Carhuas, Carolhay
 
 ---
 
